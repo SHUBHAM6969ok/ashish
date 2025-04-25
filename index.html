@@ -1,0 +1,387 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Skeletal System Quiz</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f0f4f8;
+            color: #333;
+        }
+        
+        .quiz-container {
+            background-color: white;
+            border-radius: 10px;
+            padding: 25px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+        
+        h1 {
+            color: #2a4365;
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        
+        .quiz-header {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 20px;
+            align-items: center;
+        }
+        
+        .progress {
+            font-weight: bold;
+            font-size: 18px;
+        }
+        
+        .score {
+            font-weight: bold;
+            font-size: 18px;
+            color: #2b6cb0;
+        }
+        
+        .question {
+            font-size: 20px;
+            margin-bottom: 20px;
+            font-weight: 500;
+            color: #2d3748;
+        }
+        
+        .options {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            margin-bottom: 25px;
+        }
+        
+        .option {
+            padding: 15px;
+            background-color: #edf2f7;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+        
+        .option:hover {
+            background-color: #e2e8f0;
+        }
+        
+        .selected {
+            background-color: #bee3f8;
+            border: 2px solid #63b3ed;
+        }
+        
+        .correct {
+            background-color: #c6f6d5;
+            border: 2px solid #48bb78;
+        }
+        
+        .incorrect {
+            background-color: #fed7d7;
+            border: 2px solid #f56565;
+        }
+        
+        .btn {
+            padding: 12px 24px;
+            background-color: #4299e1;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: 600;
+            transition: background-color 0.3s;
+        }
+        
+        .btn:hover {
+            background-color: #3182ce;
+        }
+        
+        .btn:disabled {
+            background-color: #a0aec0;
+            cursor: not-allowed;
+        }
+        
+        .controls {
+            display: flex;
+            justify-content: space-between;
+        }
+        
+        .feedback {
+            margin-top: 20px;
+            padding: 15px;
+            border-radius: 5px;
+            font-weight: 500;
+            display: none;
+        }
+        
+        .results {
+            text-align: center;
+            display: none;
+        }
+        
+        .results h2 {
+            color: #2b6cb0;
+            margin-bottom: 20px;
+        }
+        
+        .results p {
+            font-size: 18px;
+            margin-bottom: 20px;
+        }
+        
+        .restart-btn {
+            padding: 12px 24px;
+            background-color: #4299e1;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: 600;
+            margin-top: 20px;
+        }
+        
+        .restart-btn:hover {
+            background-color: #3182ce;
+        }
+        
+        .explanation {
+            margin-top: 15px;
+            padding: 15px;
+            background-color: #ebf8ff;
+            border-radius: 5px;
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="quiz-container">
+        <h1>Skeletal System Quiz</h1>
+        
+        <div id="quiz">
+            <div class="quiz-header">
+                <div class="progress">Question <span id="current-question">1</span> of 10</div>
+                <div class="score">Score: <span id="score">0</span></div>
+            </div>
+            
+            <div id="question-container">
+                <div class="question" id="question"></div>
+                <div class="options" id="options"></div>
+                <div class="explanation" id="explanation"></div>
+            </div>
+            
+            <div class="feedback" id="feedback"></div>
+            
+            <div class="controls">
+                <button id="next-btn" class="btn" disabled>Next Question</button>
+            </div>
+        </div>
+        
+        <div class="results" id="results">
+            <h2>Quiz Completed!</h2>
+            <p>Your final score is: <span id="final-score">0</span> out of 10</p>
+            <div id="performance-message"></div>
+            <button id="restart-btn" class="restart-btn">Take Quiz Again</button>
+        </div>
+    </div>
+
+    <script>
+        // Quiz questions
+        const quizQuestions = [
+            {
+                question: "How many bones are there in an adult human skeleton?",
+                options: ["206", "186", "226", "246"],
+                correctAnswer: 0,
+                explanation: "An adult human skeleton consists of 206 bones. At birth, there are approximately 270 bones, but many fuse together as a person grows."
+            },
+            {
+                question: "Which is the smallest bone in the human body?",
+                options: ["Stapes", "Malleus", "Incus", "Hyoid"],
+                correctAnswer: 0,
+                explanation: "The stapes (stirrup) in the middle ear is the smallest bone, measuring about 3mm in length."
+            },
+            {
+                question: "What is the main function of the skeletal system?",
+                options: ["Blood cell production", "Support and protection", "Hormone regulation", "Waste elimination"],
+                correctAnswer: 1,
+                explanation: "The primary function of the skeletal system is to provide support for the body and protection for vital organs. It also assists with movement, stores minerals, and produces blood cells in the bone marrow."
+            },
+            {
+                question: "Which bone is commonly known as the kneecap?",
+                options: ["Femur", "Tibia", "Patella", "Fibula"],
+                correctAnswer: 2,
+                explanation: "The patella is commonly known as the kneecap. It's a sesamoid bone embedded in the tendon of the quadriceps muscle."
+            },
+            {
+                question: "How many vertebrae make up the human spinal column?",
+                options: ["33", "24", "26", "31"],
+                correctAnswer: 0,
+                explanation: "The human spine consists of 33 vertebrae in total: 7 cervical, 12 thoracic, 5 lumbar, 5 sacral (fused into the sacrum), and 4 coccygeal (fused into the coccyx)."
+            },
+            {
+                question: "Which type of joint allows for the most movement?",
+                options: ["Hinge joint", "Ball and socket joint", "Pivot joint", "Gliding joint"],
+                correctAnswer: 1,
+                explanation: "Ball and socket joints (like the hip and shoulder) allow for the most movement, enabling rotation and movement in multiple planes."
+            },
+            {
+                question: "What is the scientific name for the thigh bone?",
+                options: ["Tibia", "Humerus", "Femur", "Fibula"],
+                correctAnswer: 2,
+                explanation: "The femur is the scientific name for the thigh bone. It's the longest and strongest bone in the human body."
+            },
+            {
+                question: "The adult human skull consists of how many bones?",
+                options: ["8", "14", "22", "29"],
+                correctAnswer: 2,
+                explanation: "The adult human skull consists of 22 bones: 8 cranial bones and 14 facial bones. In infants, there are fontanelles (soft spots) where cranial bones haven't fully fused."
+            },
+            {
+                question: "What substance gives bones their flexibility?",
+                options: ["Calcium", "Collagen", "Marrow", "Osteoclasts"],
+                correctAnswer: 1,
+                explanation: "Collagen is a protein that gives bones their flexibility. Calcium and other minerals provide hardness and strength."
+            },
+            {
+                question: "Which part of the skeleton is responsible for red blood cell production?",
+                options: ["Yellow bone marrow", "Red bone marrow", "Periosteum", "Compact bone"],
+                correctAnswer: 1,
+                explanation: "Red bone marrow is responsible for the production of red blood cells, white blood cells, and platelets. It's found in flat bones such as the hip bone, sternum, and cranium."
+            }
+        ];
+
+        // Quiz state
+        let currentQuestionIndex = 0;
+        let score = 0;
+        let answered = false;
+
+        // DOM elements
+        const questionElement = document.getElementById('question');
+        const optionsElement = document.getElementById('options');
+        const currentQuestionElement = document.getElementById('current-question');
+        const scoreElement = document.getElementById('score');
+        const nextButton = document.getElementById('next-btn');
+        const feedbackElement = document.getElementById('feedback');
+        const explanationElement = document.getElementById('explanation');
+        const quizElement = document.getElementById('quiz');
+        const resultsElement = document.getElementById('results');
+        const finalScoreElement = document.getElementById('final-score');
+        const performanceMessageElement = document.getElementById('performance-message');
+        const restartButton = document.getElementById('restart-btn');
+
+        // Initialize quiz
+        function initQuiz() {
+            currentQuestionIndex = 0;
+            score = 0;
+            answered = false;
+            
+            scoreElement.textContent = score;
+            quizElement.style.display = 'block';
+            resultsElement.style.display = 'none';
+            
+            loadQuestion();
+            
+            nextButton.addEventListener('click', nextQuestion);
+            restartButton.addEventListener('click', initQuiz);
+        }
+
+        // Load current question
+        function loadQuestion() {
+            answered = false;
+            nextButton.disabled = true;
+            feedbackElement.style.display = 'none';
+            explanationElement.style.display = 'none';
+            
+            const currentQuestion = quizQuestions[currentQuestionIndex];
+            currentQuestionElement.textContent = currentQuestionIndex + 1;
+            questionElement.textContent = currentQuestion.question;
+            
+            // Clear options
+            optionsElement.innerHTML = '';
+            
+            // Add options
+            currentQuestion.options.forEach((option, index) => {
+                const optionElement = document.createElement('div');
+                optionElement.classList.add('option');
+                optionElement.textContent = option;
+                optionElement.addEventListener('click', () => selectOption(index));
+                optionsElement.appendChild(optionElement);
+            });
+        }
+
+        // Handle option selection
+        function selectOption(selectedIndex) {
+            if (answered) return;
+            
+            answered = true;
+            const currentQuestion = quizQuestions[currentQuestionIndex];
+            const options = document.querySelectorAll('.option');
+            
+            // Mark selected option
+            options[selectedIndex].classList.add('selected');
+            
+            // Check if answer is correct
+            if (selectedIndex === currentQuestion.correctAnswer) {
+                options[selectedIndex].classList.add('correct');
+                feedbackElement.textContent = "Correct! Well done!";
+                feedbackElement.style.backgroundColor = "#c6f6d5";
+                score++;
+                scoreElement.textContent = score;
+            } else {
+                options[selectedIndex].classList.add('incorrect');
+                options[currentQuestion.correctAnswer].classList.add('correct');
+                feedbackElement.textContent = "Incorrect. The correct answer is: " + currentQuestion.options[currentQuestion.correctAnswer];
+                feedbackElement.style.backgroundColor = "#fed7d7";
+            }
+            
+            feedbackElement.style.display = 'block';
+            explanationElement.textContent = currentQuestion.explanation;
+            explanationElement.style.display = 'block';
+            nextButton.disabled = false;
+        }
+
+        // Move to next question
+        function nextQuestion() {
+            currentQuestionIndex++;
+            
+            if (currentQuestionIndex < quizQuestions.length) {
+                loadQuestion();
+            } else {
+                showResults();
+            }
+        }
+
+        // Show final results
+        function showResults() {
+            quizElement.style.display = 'none';
+            resultsElement.style.display = 'block';
+            finalScoreElement.textContent = score;
+            
+            // Generate performance message
+            let performanceMessage = "";
+            if (score === 10) {
+                performanceMessage = "Perfect score! You're a skeletal system expert!";
+            } else if (score >= 8) {
+                performanceMessage = "Excellent work! You know your bones very well!";
+            } else if (score >= 6) {
+                performanceMessage = "Good job! You have a solid understanding of the skeletal system.";
+            } else if (score >= 4) {
+                performanceMessage = "Not bad! With a little more study, you'll master the skeletal system.";
+            } else {
+                performanceMessage = "Keep studying! The skeletal system has a lot of complex parts to remember.";
+            }
+            
+            performanceMessageElement.textContent = performanceMessage;
+        }
+
+        // Start the quiz
+        initQuiz();
+    </script>
+</body>
+</html>
